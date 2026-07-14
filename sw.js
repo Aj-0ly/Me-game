@@ -4,7 +4,7 @@
  * Falls back to cache when offline so the game still opens.
  * CRITICAL: every deploy bump CACHE ("dtf-v3" now) so old workers are dropped.
  */
-const CACHE = "dtf-v3";
+const CACHE = "dtf-v4";
 const SHELL = [
   "./", "./index.html", "./engine.js", "./ui.js",
   "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"

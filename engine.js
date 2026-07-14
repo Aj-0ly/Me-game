@@ -359,8 +359,8 @@
 
   function devGrantItem(team, nameOrRarity) {
     const r = RARITY[nameOrRarity] ? nameOrRarity : pickRarity();
-    const pool = ITEMS.filter(i => i.rarity === r);
-    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    const pool = ITEMS.filter(i => !i.minR || rarityRank(i.minR) <= rarityRank(r));
+    const chosen = pool[Math.floor(rng() * pool.length)] || ITEMS[0];
     const item = rollItemSpecific(chosen, r);
     const t = team.filter(h => h.alive());
     (t[0] || team[0]).equip(item);
