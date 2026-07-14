@@ -1,0 +1,12 @@
+# test / dev artifacts — never deploy
+node_modules/
+probe.js
+*.pyc
+__pycache__/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# local env
+.env
