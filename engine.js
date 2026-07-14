@@ -357,6 +357,23 @@
     if (relicOn(meta, "relic_thrive")) team.forEach(h => { h.level += 1; h._derive(); });
   }
 
+  function devGrantItem(team, nameOrRarity) {
+    const r = RARITY[nameOrRarity] ? nameOrRarity : pickRarity();
+    const pool = ITEMS.filter(i => i.rarity === r);
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    const item = rollItemSpecific(chosen, r);
+    const t = team.filter(h => h.alive());
+    (t[0] || team[0]).equip(item);
+    return item;
+  }
+  function rollItemSpecific(chosen, rarity) {
+    const m = RARITY[rarity].mult; const apply = {};
+    for (const k in chosen.base) apply[k] = chosen.base[k] * (k.endsWith("pct") ? m : m);
+    return { name: chosen.name, desc: chosen.desc, rarity, apply, flavor: chosen.flavor };
+  }
+  function devUnlockAll(meta) { Object.keys(CLASSES).forEach(k => { if (CLASSES[k].unlock) meta.unlocks[CLASSES[k].unlock] = true; }); Object.keys(SHOP_RELICS).forEach(k => meta.relics[k] = true); SHOP_UPGRADES.forEach(u => meta.ranks[u.id] = u.max); }
+  function devAddShards(meta, n) { meta.shards += n; }
+
   const CRYSTAL = {
     CLASSES, SPEC, ELITE, RARITY, RAR_ORDER, ITEMS, SHOP_UPGRADES, SHOP_HEROES, SHOP_RELICS,
     MODES, MAX_WAVE, RELIC_DEFS: SHOP_RELICS, Unit,
@@ -364,6 +381,7 @@
     resolveWave, spawnWave, draftTeam, levelUpAll, autoSpec,
     bestLootTarget, rollLoot, rollItem, rarityRank,
     hpBar, loadMeta, saveMeta, upgradeCost, unlockedHeroes, relicOn, applyMeta, log,
+    devGrantItem, devUnlockAll, devAddShards,
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = CRYSTAL;

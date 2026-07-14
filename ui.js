@@ -289,9 +289,44 @@
   let modalBg=null; function openModal(title,fill){ closeModal(); modalBg=el("div","modal-bg"); const m=el("div","modal"); m.appendChild(el("h2",null,title)); fill(m); modalBg.appendChild(m); document.body.appendChild(modalBg); modalBg.onclick=(e)=>{ if(e.target===modalBg)closeModal(); }; }
   function closeModal(){ if(modalBg){ modalBg.remove(); modalBg=null; } }
 
+  // ---------- hidden dev console (admin only) ----------
+  // Activation: type a code into the shard counter, OR the secret key-seq.
+  const _SEQ = [38,38,40,40,37,39,37,39,66,65]; // arrows + B A
+  let _buf = [];
+  const _CODE = "0xAJ"; // type this into the shard label to unlock
+  function openDev(){
+    if (S._devOpen) return; S._devOpen = true;
+    const m = el("div","modal"); m.style.borderColor="var(--magenta)"; m.appendChild(el("h2",null,"⌘ console"));
+    const note = el("div","muted","admin · session only"); m.appendChild(note);
+    function row(label, fn){ const b=el("button","btn opt",label); b.onclick=()=>{ fn(); toast(label); }; m.appendChild(b); }
+    row("+1000 shards",()=>{ C.devAddShards(S.meta,1000); saveMeta(); refreshShards(); if(S.screen==="shop")renderShop(); });
+    row("unlock ALL (heroes+relics+max shop)",()=>{ C.devUnlockAll(S.meta); saveMeta(); if(S.screen==="shop")renderShop(); });
+    row("grant LEGENDARY item",()=>{ if(S.team&&S.team[0]){ const it=C.devGrantItem(S.team,"Legendary"); toast("gave "+it.name); refreshCards(); } });
+    row("grant EPIC item",()=>{ if(S.team&&S.team[0]){ const it=C.devGrantItem(S.team,"Epic"); toast("gave "+it.name); refreshCards(); } });
+    row("heal warband",()=>{ if(S.team)S.team.forEach(h=>{h.hp=h.hp_max;}); Object.values(S.cards).forEach(c=>setCardHP(c,c._u.hp)); });
+    row("win this wave",()=>{ if(S.screen==="battle"&&S.animating===false){ S.enemies.forEach(e=>e.hp=0); toast("force-clear"); finishWave(true); } });
+    row("god mode: +9999 hp all",()=>{ if(S.team)S.team.forEach(h=>{h.hp_max+=9999;h.hp=h.hp_max;}); Object.values(S.cards).forEach(c=>setCardHP(c,c._u.hp)); });
+    const close=el("button","btn primary","close"); close.onclick=()=>{ S._devOpen=false; closeModal(); }; m.appendChild(close);
+    openModal("⌘ console",()=>{ /* already built above; reuse */ });
+    // replace modal content with our built node
+    const bg=document.querySelector(".modal-bg"); if(bg){ bg.querySelector(".modal").replaceWith(m); }
+  }
+  function maybeDevCode(s){ if((s||"").trim().toUpperCase()===_CODE.toUpperCase()) openDev(); }
+  // shard label acts as hidden input target via prompt-less click+type fallback
+  function hookShardLabel(){
+    const lbl=$("shardLbl"); if(!lbl||lbl._hooked)return; lbl._hooked=true;
+    lbl.style.cursor="text"; lbl.title="";
+    lbl.addEventListener("click",()=>{ const v=prompt("enter access key (leave blank to cancel)"); if(v)maybeDevCode(v); });
+  }
+  document.addEventListener("keydown",(e)=>{
+    _buf.push(e.keyCode); if(_buf.length>_SEQ.length)_buf.shift();
+    if(_SEQ.join(",")===_buf.join(",")){ _buf=[]; openDev(); }
+  });
+
   // ---------- boot ----------
   $("gearBtn").onclick=()=>{ SFX.click(); openSettings(); };
   refreshShards(); applySettings(); render(); checkAchievements();
+  hookShardLabel();
   // first user gesture unlocks audio (autoplay policy)
   document.addEventListener("pointerdown",()=>{ if(actx&&actx.state==="suspended")actx.resume(); },{once:true});
   document.addEventListener("keydown",()=>{ if(actx&&actx.state==="suspended")actx.resume(); },{once:true});

@@ -71,4 +71,28 @@ const relBuy=buttons().find(b=>b.textContent.includes("◈")); if(relBuy){ click
 const ta=document.getElementById("exportTa"); console.log("EXPORT present:", !!ta&&ta.value.startsWith("DTF1:"));
 const code=ta?ta.value:""; window.prompt=()=>code; const imp=buttons().find(b=>b.textContent.includes("IMPORT")); if(imp)click(imp);
 console.log("IMPORT ok:", !document.body.textContent.includes("invalid"));
+
+// 7) hidden DEV console (admin) — keyboard sequence + actions
+function key(code){ document.dispatchEvent(new window.KeyboardEvent("keydown",{keyCode:code,key:String(code),which:code,bubbles:true})); }
+[38,38,40,40,37,39,37,39,66,65].forEach(key); // Konami + BA
+const devOpen = !!document.querySelector(".modal");
+console.log("DEV opens via key-seq:", devOpen);
+if(devOpen){
+  const rows=[...document.querySelectorAll(".modal .opt")].map(b=>b.textContent);
+  console.log("DEV rows:", rows.length, "(expect 7)");
+  // shards before
+  const beforeShards = window.CRYSTAL.loadMeta().shards;
+  const addRow = [...document.querySelectorAll(".modal .opt")].find(b=>b.textContent.includes("1000 shards"));
+  if(addRow){ click(addRow); console.log("DEV +1000 shards:", window.CRYSTAL.loadMeta().shards>beforeShards); }
+  const unlockRow = [...document.querySelectorAll(".modal .opt")].find(b=>b.textContent.includes("unlock ALL"));
+  if(unlockRow){ click(unlockRow); console.log("DEV unlock ALL:", Object.keys(window.CRYSTAL.loadMeta().unlocks).length>0 && Object.keys(window.CRYSTAL.loadMeta().relics).length>0); }
+  const closeBtn=[...document.querySelectorAll(".modal .btn")].find(b=>b.textContent.includes("close"));
+  if(closeBtn)click(closeBtn);
+}
+// hidden code path: click shard label -> prompt -> type code
+window.prompt=()=>"0xAJ";
+const shardLbl=document.getElementById("shardLbl");
+if(shardLbl){ shardLbl.dispatchEvent(new window.MouseEvent("click",{bubbles:true})); }
+console.log("DEV reopens via code:", !!document.querySelector(".modal"));
+const close2=[...document.querySelectorAll(".modal .btn")].find(b=>b.textContent.includes("close")); if(close2)click(close2);
 console.log("ALL_UI_OK");

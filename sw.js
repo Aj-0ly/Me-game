@@ -2,9 +2,9 @@
  * Strategy: NETWORK-FIRST for app shell (engine.js, ui.js, index.html, manifest)
  * so the phone always pulls the LATEST version when online = auto-update.
  * Falls back to cache when offline so the game still opens.
- * CRITICAL: every deploy you bump CACHE = "dtf-v2" so old workers are dropped.
+ * CRITICAL: every deploy bump CACHE ("dtf-v3" now) so old workers are dropped.
  */
-const CACHE = "dtf-v2";
+const CACHE = "dtf-v3";
 const SHELL = [
   "./", "./index.html", "./engine.js", "./ui.js",
   "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"
