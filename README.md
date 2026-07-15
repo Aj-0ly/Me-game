@@ -1,7 +1,7 @@
 # DTF // TEXT AUTOBATTLER — WEB (cross-device)
 
 A **roguelite text-RPG autobattler** you can play **in any browser** — your
-Samsung S25 Ultra (phone) and your Windows laptop both work, no install.
+phone and your Windows laptop both work, no install.
 Retro green-on-black terminal look, animated combat, persistent SHOP.
 
 > The original Python/Tk desktop version lives one folder up (`../main.py`).
