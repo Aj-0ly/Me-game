@@ -292,8 +292,10 @@
   // ---------- hidden dev console (admin only) ----------
   // Activation: type a code into the shard counter, OR the secret key-seq.
   const _SEQ = [38,38,40,40,37,39,37,39,66,65]; // arrows + B A
-  let _buf = [];
-  const _CODE = "0xAJ"; // type this into the shard label to unlock
+  // access code stored XOR-scrambled so it never appears in plain text in source
+  const _KEY = "dtf"; const _OBF = [10,68,16,5];
+  function _decode(a,k){ let s=""; for(let i=0;i<a.length;i++) s+=String.fromCharCode(a[i]^k.charCodeAt(i%k.length)); return s; }
+  const _CODE = _decode(_OBF, _KEY);
   function openDev(){
     if (S._devOpen) return; S._devOpen = true;
     const m = el("div","modal"); m.style.borderColor="var(--magenta)"; m.appendChild(el("h2",null,"⌘ console"));

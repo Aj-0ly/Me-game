@@ -73,7 +73,7 @@ const code=ta?ta.value:""; window.prompt=()=>code; const imp=buttons().find(b=>b
 console.log("IMPORT ok:", !document.body.textContent.includes("invalid"));
 
 // 7) hidden DEV console (admin) — keyboard sequence + actions
-function key(code){ document.dispatchEvent(new window.KeyboardEvent("keydown",{keyCode:code,key:String(code),which:code,bubbles:true})); }
+function key(code){ try{ const e=new window.Event("keydown",{bubbles:true}); e.keyCode=code; e.which=code; document.dispatchEvent(e); }catch(err){} }
 [38,38,40,40,37,39,37,39,66,65].forEach(key); // Konami + BA
 const devOpen = !!document.querySelector(".modal");
 console.log("DEV opens via key-seq:", devOpen);
@@ -90,7 +90,7 @@ if(devOpen){
   if(closeBtn)click(closeBtn);
 }
 // hidden code path: click shard label -> prompt -> type code
-window.prompt=()=>"0xAJ";
+window.prompt=()=>"n0va";
 const shardLbl=document.getElementById("shardLbl");
 if(shardLbl){ shardLbl.dispatchEvent(new window.MouseEvent("click",{bubbles:true})); }
 console.log("DEV reopens via code:", !!document.querySelector(".modal"));
